@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Markets TV Dashboard</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+    background:#000;
+    color:white;
+    font-family:Arial, Helvetica, sans-serif;
+    width:100vw;
+    height:100vh;
+}
+
+/* =========================================
+   MAIN MARKET TICKER
+========================================= */
+
+#ticker-container{
+    position:fixed;
+    top:0;
+    left:20vw;
+    width:80vw;
+    height:50vh;
+    z-index:1;
+    animation:tickerFade 3s ease-in-out infinite;
+}
+
+.tradingview-widget-container{
+    width:100%;
+    height:100%;
+    transform:scale(1.8);
+    transform-origin:top left;
+    animation:pulseGlow 4s ease-in-out infinite;
+    filter:drop-shadow(0 0 12px rgba(0,180,255,0.35));
+}
+
+.tradingview-widget-container__widget{
+    animation:marketPulse 1.8s ease-in-out infinite;
+}
+
+/* =========================================
+   CLOCK BAR
+========================================= */
+
+#clock-container{
+    position:fixed;
+    top:55%;
+    left:20vw;
+    width:80vw;
+    height:12vh;
+    overflow:hidden;
+    background:#001f3f;
+    border-top:2px solid white;
+    border-bottom:2px solid white;
+    z-index:2;
+}
+
+#clock-ticker{
+    display:inline-block;
+    white-space:nowrap;
+    padding-left:100%;
+    animation:scroll-clocks 55s linear infinite;
+}
+
+.clock{
+    display:inline-block;
+    margin-right:60px;
+    padding:18px 25px;
+    font-size:34px;
+    font-weight:bold;
+}
+
+/* =========================================
+   MOP EXCHANGE RATES BAR
+========================================= */
+
+#mop-container{
+    position:fixed;
+    top:67%;
+    left:20vw;
+    width:80vw;
+    height:11vh;
+    overflow:hidden;
+    background:#001a10;
+    border-top:2px solid #00cc66;
+    border-bottom:2px solid #00cc66;
+    z-index:3;
+}
+
+#mop-ticker{
+    display:inline-block;
+    white-space:nowrap;
+    padding-left:100%;
+    animation:scroll-mop 50s linear infinite;
+}
+
+.mop-rate{
+    display:inline-block;
+    margin-right:70px;
+    padding:14px 22px;
+    font-size:24px;
+    font-weight:bold;
+    letter-spacing:0.5px;
+}
+
+.mop-label{
+    color:#00cc66;
+    margin-right:8px;
+}
+
+.mop-value{
+    color:#ffffff;
+}
+
+.mop-flag{
+    margin-right:6px;
+    font-size:26px;
+}
+
+/* =========================================
+   WEATHER BAR
+========================================= */
+
+#weather-container{
+    position:fixed;
+    top:78%;
+    left:20vw;
+    width:80vw;
+    height:11vh;
+    overflow:hidden;
+    background:#002b55;
+    border-top:2px solid white;
+    border-bottom:2px solid white;
+    z-index:4;
+}
+
+#weather-ticker{
+    display:inline-block;
+    white-space:nowrap;
+    padding-left:100%;
+    animation:scroll-weather 70s linear infinite;
+}
+
+.weather{
+    display:inline-block;
+    margin-right:80px;
+    padding:18px 25px;
+    font-size:26px;
+    font-weight:600;
+    opacity:0.9;
+    letter-spacing:1px;
+}
+
+/* =========================================
+   STORIES SIDEBAR
+========================================= */
+
+#stories-container{
+    position:fixed;
+    top:0;
+    left:0;
+    width:20vw;
+    height:100vh;
+    overflow:hidden;
+    background:#001f3f;
+    border-right:2px solid white;
+    z-index:5;
+}
+
+#stories-ticker{
+    width:100%;
+    transform:scale(0.82);
+    transform-origin:top left;
+    animation:scroll-stories 35s linear infinite;
+}
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes scroll-clocks{
+    0%  { transform: translateX(0); }
+    100%{ transform: translateX(-100%); }
+}
+
+@keyframes scroll-mop{
+    0%  { transform: translateX(0); }
+    100%{ transform: translateX(-100%); }
+}
+
+@keyframes scroll-weather{
+    0%  { transform: translateX(0); }
+    100%{ transform: translateX(-100%); }
+}
+
+@keyframes scroll-stories{
+    0%  { transform: translateY(100%) scale(0.82); }
+    100%{ transform: translateY(-100%) scale(0.82); }
+}
+
+/* =========================================
+   LIVE TV EFFECTS
+========================================= */
+
+@keyframes pulseGlow{
+    0%  { filter: drop-shadow(0 0 6px rgba(0,180,255,0.20)); }
+    50% { filter: drop-shadow(0 0 18px rgba(0,180,255,0.55)); }
+    100%{ filter: drop-shadow(0 0 6px rgba(0,180,255,0.20)); }
+}
+
+@keyframes tickerFade{
+    0%  { opacity: 0.88; }
+    50% { opacity: 1; }
+    100%{ opacity: 0.88; }
+}
+
+@keyframes marketPulse{
+    0%  { transform: translateY(0px); }
+    50% { transform: translateY(-2px); }
+    100%{ transform: translateY(0px); }
+}
+
+/* =========================================
+   COPYRIGHT
+========================================= */
+
+.tradingview-widget-copyright,
+.stories-copyright{
+    font-size:10px;
+    opacity:0.6;
+}
+
+.tradingview-widget-copyright{
+    position:fixed;
+    bottom:8px;
+    right:8px;
+}
+
+.stories-copyright{
+    position:absolute;
+    bottom:10px;
+    left:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================================
+     MARKET TICKER
+========================================= -->
+
+<div id="ticker-container">
+<div class="tradingview-widget-container">
+<div class="tradingview-widget-container__widget"></div>
+
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{
+    "symbols":[
+        {"proName":"FOREXCOM:SPXUSD","title":"S&P 500"},
+        {"proName":"FOREXCOM:NSXUSD","title":"NASDAQ 100"},
+        {"proName":"BITSTAMP:BTCUSD","title":"Bitcoin"},
+        {"proName":"BITSTAMP:ETHUSD","title":"Ethereum"},
+        {"proName":"NYSE:GS","title":"Goldman Sachs"},
+        {"proName":"NYSE:JPM","title":"JPMorgan"},
+        {"proName":"NASDAQ:AVGO","title":"Broadcom"},
+        {"proName":"NYSE:V","title":"Visa"},
+        {"proName":"NYSE:BA","title":"Boeing"},
+        {"proName":"NYSE:MCD","title":"McDonald's"},
+        {"proName":"NASDAQ:CSCO","title":"Cisco"},
+        {"proName":"NYSE:HSBC","title":"HSBC"},
+        {"proName":"OANDA:XAUUSD","title":"Gold"},
+        {"proName":"OANDA:XAGUSD","title":"Silver"},
+        {"proName":"FX_IDC:EURUSD","title":"EUR/USD"},
+        {"proName":"OANDA:USDCAD","title":"USD/CAD"}
+    ],
+    "showSymbolLogo":true,
+    "isTransparent":false,
+    "displayMode":"compact",
+    "colorTheme":"dark",
+    "locale":"en"
+}
+</script>
+</div>
+</div>
+
+<!-- =========================================
+     CLOCKS
+========================================= -->
+
+<div id="clock-container">
+<div id="clock-ticker">
+    <span class="clock" id="new-york"></span>
+    <span class="clock" id="london"></span>
+    <span class="clock" id="tokyo"></span>
+    <span class="clock" id="sydney"></span>
+    <span class="clock" id="macau"></span>
+</div>
+</div>
+
+<!-- =========================================
+     MOP EXCHANGE RATES
+========================================= -->
+
+<div id="mop-container">
+<div id="mop-ticker">
+
+    <span class="mop-rate">
+        <span class="mop-flag">🇺🇸</span>
+        <span class="mop-label">1 USD =</span>
+        <span class="mop-value">8.07 MOP</span>
+    </span>
+
+    <span class="mop-rate">
+        <span class="mop-flag">🇪🇺</span>
+        <span class="mop-label">1 EUR =</span>
+        <span class="mop-value">9.36 MOP</span>
+    </span>
+
+    <span class="mop-rate">
+        <span class="mop-flag">🇬🇧</span>
+        <span class="mop-label">1 GBP =</span>
+        <span class="mop-value">10.92 MOP</span>
+    </span>
+
+    <span class="mop-rate">
+        <span class="mop-flag">🇨🇭</span>
+        <span class="mop-label">1 CHF =</span>
+        <span class="mop-value">10.38 MOP</span>
+    </span>
+
+    <span class="mop-rate">
+        <span class="mop-flag">🇭🇰</span>
+        <span class="mop-label">1 HKD =</span>
+        <span class="mop-value">1.03 MOP</span>
+    </span>
+
+    <span class="mop-rate">
+        <span class="mop-flag">🇯🇵</span>
+        <span class="mop-label">100 JPY =</span>
+        <span class="mop-value">5.17 MOP</span>
+    </span>
+
+</div>
+</div>
+
+<!-- =========================================
+     WEATHER
+========================================= -->
+
+<div id="weather-container">
+<div id="weather-ticker">
+    <span class="weather" id="weather-ny"></span>
+    <span class="weather" id="weather-lon"></span>
+    <span class="weather" id="weather-tok"></span>
+    <span class="weather" id="weather-syd"></span>
+    <span class="weather" id="weather-mac"></span>
+</div>
+</div>
+
+<!-- =========================================
+     STORIES
+========================================= -->
+
+<div id="stories-container">
+<div class="tradingview-widget-container" id="stories-ticker">
+<div class="tradingview-widget-container__widget"></div>
+
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+{
+    "feedMode":"all_symbols",
+    "displayMode":"regular",
+    "isTransparent":true,
+    "colorTheme":"dark",
+    "locale":"en",
+    "width":"100%",
+    "height":"100%"
+}
+</script>
+</div>
+</div>
+
+<!-- =========================================
+     JAVASCRIPT
+========================================= -->
+
+<script>
+
+const timeZones = [
+    { id:'new-york', zone:'America/New_York', label:'🗽 NEW YORK' },
+    { id:'london', zone:'Europe/London', label:'🎡 LONDON' },
+    { id:'tokyo', zone:'Asia/Tokyo', label:'🗼 TOKYO' },
+    { id:'sydney', zone:'Australia/Sydney', label:'🦘 SYDNEY' },
+    { id:'macau', zone:'Asia/Macau', label:'🎰 MACAU' }
+];
+
+function updateClocks(){
+    timeZones.forEach(({id, zone, label}) => {
+
+        const time = new Date().toLocaleTimeString('en-US', {
+            timeZone: zone,
+            hour:'2-digit',
+            minute:'2-digit',
+            second:'2-digit',
+            hour12:true
+        });
+
+        document.getElementById(id).textContent =
+            `${label}: ${time}`;
+
+    });
+}
+
+updateClocks();
+setInterval(updateClocks, 1000);
+
+const weatherData = [
+    { id:'weather-ny', text:'☀️ NEW YORK 24°C CLEAR' },
+    { id:'weather-lon', text:'🌧️ LONDON 18°C RAIN' },
+    { id:'weather-tok', text:'☁️ TOKYO 27°C CLOUDS' },
+    { id:'weather-syd', text:'☀️ SYDNEY 21°C SUNNY' },
+    { id:'weather-mac', text:'🌤️ MACAU 29°C PARTLY CLOUDY' }
+];
+
+function updateWeather(){
+
+    weatherData.forEach(city => {
+        document.getElementById(city.id).textContent = city.text;
+    });
+
+}
+
+updateWeather();
+
+</script>
+
+</body>
+</html>
